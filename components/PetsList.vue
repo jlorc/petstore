@@ -119,7 +119,6 @@ export default class PetsList extends Vue {
     text-align: center;
     word-break: break-word;
     max-width: 240px;
-    text-transform: capitalize;
   }
 
   &__info {
