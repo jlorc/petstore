@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Filters renders correctly 1`] = `
+<div
+  class="filters"
+>
+  <div
+    class="filters__wrapper"
+  >
+    <button
+      class="filters__btn"
+    >
+      
+      available
+      
+      <span
+        class="filters__icon"
+      />
+    </button>
+     
+    <div
+      class="filters__dropdown"
+    >
+      <div
+        class="filters__dropdown-item"
+      >
+        
+        available
+        
+        <span
+          class="filters__dropdown-icon"
+        />
+      </div>
+      <div
+        class="filters__dropdown-item"
+      >
+        
+        pending
+        
+        <!---->
+      </div>
+      <div
+        class="filters__dropdown-item"
+      >
+        
+        sold
+        
+        <!---->
+      </div>
+    </div>
+  </div>
+</div>
+`;

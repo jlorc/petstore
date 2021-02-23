@@ -2,18 +2,29 @@
   <div v-if="showPopup" class="popup">
     <div class="popup__content">
       <img :src="dogImageUrl()" alt="" class="popup__image" />
-      <p class="popup__description">Are you sure you want to buy this pet?</p>
-      <p class="popup__description popup__description--info">
-        Id: <b>{{ selectedPet.id }}</b>
-      </p>
-      <p class="popup__description popup__description--info">
-        Name: <b>{{ selectedPet.name }}</b>
-      </p>
-      <p class="popup__description popup__description--info">
-        Status: <b>{{ selectedPet.status }}</b>
+      <div v-if="!showResponseMessage" class="popup__content-wrapper">
+        <p class="popup__description">Are you sure you want to buy this pet?</p>
+        <p class="popup__description popup__description--info">
+          Id: <b>{{ selectedPet.id }}</b>
+        </p>
+        <p class="popup__description popup__description--info">
+          Name: <b>{{ selectedPet.name }}</b>
+        </p>
+        <p class="popup__description popup__description--info">
+          Status: <b>{{ selectedPet.status }}</b>
+        </p>
+        <button
+          type="button"
+          class="btn btn--top-margin"
+          @click="placeAnOrderAction"
+        >
+          Buy
+        </button>
+      </div>
+      <p v-else class="popup__description" :class="responseClasses">
+        {{ responseText }}
       </p>
       <span class="popup__close" @click="showPopup = false"></span>
-      <button type="button" class="btn btn--top-margin" @click="placeAnOrderAction">Buy</button>
     </div>
     <div class="popup__blackout"></div>
   </div>
@@ -21,18 +32,29 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { Pet } from '~/store/constants/PetsModuleConstants'
+import { namespace } from 'vuex-class'
+import {
+  PETS_MODULE_ACTIONS,
+  PETS_MODULE_GETTERS,
+  Pet,
+} from '~/store/constants/PetsModuleConstants'
+
+const petsModule = namespace('modules/PetsModule')
 
 @Component
 export default class Popup extends Vue {
+  @petsModule.Getter(PETS_MODULE_GETTERS.GET_POST_ERROR) postError: boolean
+  @petsModule.Action(PETS_MODULE_ACTIONS.POST_PLACE_AN_ORDER) postPlaceAnOrder: (petData: Pet) => Promise<void>
   showPopup: boolean = false
-  selectedPet?: Pet
+  showResponseMessage: boolean = false
+  selectedPet!: Pet
 
   mounted(): void {
     this.$root.$on('showPopup', this.setPopup)
   }
 
   setPopup(petData: Pet): void {
+    this.showResponseMessage = false
     this.selectedPet = petData
     this.showPopup = true
   }
@@ -42,7 +64,22 @@ export default class Popup extends Vue {
   }
 
   placeAnOrderAction(): void {
+    this.postPlaceAnOrder(this.selectedPet).then(() => {
+      this.showResponseMessage = true
+    })
+  }
 
+  get responseText(): string {
+    return this.postError
+      ? 'Something went wrong, please try again.'
+      : 'Thank you for your purchase!'
+  }
+
+  get responseClasses() {
+    return {
+      'popup__description--red': this.postError,
+      'popup__description--green': !this.postError,
+    }
   }
 }
 </script>
@@ -68,6 +105,14 @@ export default class Popup extends Vue {
       font-size: 16px;
       color: $grey;
       margin: 5px 0;
+    }
+
+    &--red {
+      color: $error;
+    }
+
+    &--green {
+      color: $btn-color;
     }
   }
 
@@ -98,6 +143,13 @@ export default class Popup extends Vue {
     z-index: 5;
     background-color: white;
     border-radius: 3px;
+
+    &-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
   }
 
   &__close {

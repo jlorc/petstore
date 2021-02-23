@@ -13,10 +13,10 @@
           {{ pet.name }} is so cute!
         </p>
         <p v-else-if="pet.status === 'pending'" class="pets__description">
-          This pet is waiting for family approval
+          This pet is waiting for family approval.
         </p>
         <p v-else class="pets__description">
-          This pet has already found a family
+          This pet has already found a family.
         </p>
         <button
           v-if="pet.status === 'available'"
@@ -119,6 +119,7 @@ export default class PetsList extends Vue {
     text-align: center;
     word-break: break-word;
     max-width: 240px;
+    text-transform: capitalize;
   }
 
   &__info {
@@ -132,6 +133,7 @@ export default class PetsList extends Vue {
     margin: 10px 0;
     word-break: break-word;
     max-width: 240px;
+    text-transform: capitalize;
   }
 }
 </style>
